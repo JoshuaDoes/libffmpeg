@@ -16,9 +16,9 @@ var (
 )
 
 type Libffmpeg struct {
-	i       int
-	in, out *crunchio.Buffer
-	done    bool
+	i            int
+	in, out      *crunchio.Buffer
+	closed, done bool
 }
 
 func NewLibffmpeg(codec, format string) *Libffmpeg {
@@ -53,6 +53,10 @@ func NewLibffmpeg(codec, format string) *Libffmpeg {
 
 func (lf *Libffmpeg) get() *ffmpeg.Ffmpeg {
 	return instances[lf.i]
+}
+
+func (lf *Libffmpeg) IsClosed() bool {
+	return lf.closed
 }
 
 func (lf *Libffmpeg) IsDone() bool {
@@ -93,6 +97,9 @@ func (lf *Libffmpeg) SetLibraryPath(path string) {
 }
 
 func (lf *Libffmpeg) Start() string {
+	if lf.closed {
+		return "libffmpeg: Already closed"
+	}
 	if err := lf.get().Start(); err != nil {
 		return fmt.Sprintf("%v", err)
 	}
@@ -100,17 +107,37 @@ func (lf *Libffmpeg) Start() string {
 }
 
 func (lf *Libffmpeg) Close() string {
+	if lf.closed {
+		return "libffmpeg: Already closed"
+	}
+	if lf.in != nil {
+		if err := lf.in.Close(); err != nil {
+			return fmt.Sprintf("%v", err)
+		}
+	}
+	if lf.out != nil {
+		if err := lf.out.Close(); err != nil {
+			return fmt.Sprintf("%v", err)
+		}
+	}
 	if err := lf.get().Close(); err != nil {
 		return fmt.Sprintf("%v", err)
 	}
+	lf.closed = true
 	return ""
 }
 
 func (lf *Libffmpeg) IsRunning() bool {
+	if lf.done {
+		return false
+	}
 	return lf.get().IsRunning()
 }
 
 func (lf *Libffmpeg) Run() string {
+	if lf.closed {
+		return "libffmpeg: Already closed"
+	}
 	if err := lf.get().Run(); err != nil {
 		return fmt.Sprintf("%v", err)
 	}
