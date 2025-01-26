@@ -92,26 +92,29 @@ func (lf *Libffmpeg) SetLibraryPath(path string) {
 	lf.get().SetLibraryPath(path)
 }
 
-func (lf *Libffmpeg) Start() {
+func (lf *Libffmpeg) Start() string {
 	if err := lf.get().Start(); err != nil {
-		panic(err)
+		return fmt.Sprintf("%v", err)
 	}
+	return ""
 }
 
-func (lf *Libffmpeg) Close() {
+func (lf *Libffmpeg) Close() string {
 	if err := lf.get().Close(); err != nil {
-		panic(err)
+		return fmt.Sprintf("%v", err)
 	}
+	return ""
 }
 
 func (lf *Libffmpeg) IsRunning() bool {
 	return lf.get().IsRunning()
 }
 
-func (lf *Libffmpeg) Run() {
+func (lf *Libffmpeg) Run() string {
 	if err := lf.get().Run(); err != nil {
-		panic(err)
+		return fmt.Sprintf("%v", err)
 	}
+	return ""
 }
 
 func (lf *Libffmpeg) GetStats() string {

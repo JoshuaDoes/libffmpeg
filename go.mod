@@ -2,7 +2,7 @@ module github.com/JoshuaDoes/libffmpeg
 
 go 1.23.4
 
-require github.com/JoshuaDoes/ffmpeg v0.0.4-0.20250122210708-3fe25a6f6472
+require github.com/JoshuaDoes/ffmpeg v0.0.4-0.20250126021213-6f2d80d87ea8
 
 require (
 	github.com/JoshuaDoes/crunchio v0.0.3-0.20250120233618-bb0e090b1d9c // indirect
